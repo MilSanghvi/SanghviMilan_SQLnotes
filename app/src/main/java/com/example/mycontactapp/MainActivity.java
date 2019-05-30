@@ -18,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
 
     DatabaseHelper myDb;
     EditText editName;
+    EditText editNumber;
+    EditText editAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +27,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        editName = findViewById(R.id.editText_name);
+        editName = findViewById(R.id.editText_Name);
+        editNumber = findViewById(R.id.editText_Number);
+        editAddress = findViewById(R.id.editText_Address);
         myDb = new DatabaseHelper( this );
         Log.d( "MyContactApp", "DatabaseHelper: constructed the DatabaseHelper");
 
@@ -34,8 +38,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void addData(View view){
 
-        //add Log.d
-        boolean isInserted = myDb.insertData(editName.getText().toString());
+        Log.d("MyContactApp","MainActivity: Add contact button passed");
+        boolean isInserted = myDb.insertData(editName.getText().toString(),editAddress.getText().toString(),editNumber.getText().toString());
 
         if (isInserted == true){
           Toast.makeText(MainActivity.this, "Success - contact inserted", Toast.LENGTH_LONG ).show();
@@ -48,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void viewData(View view){
         Cursor res = myDb.getAllData();
-        //put log.d's in here
+        Log.d("MyContactApp","MainActivity: viewData: received cursor " + res.getCount());
         if (res.getCount() == 0){
             showMessage("Error", "No data found in database");
             return;
@@ -57,10 +61,17 @@ public class MainActivity extends AppCompatActivity {
         StringBuffer buffer = new StringBuffer();
         while(res.moveToNext()){
             //Append res columsn to buffer - see StringBuffer and Cursor API's
-            buffer.append("ID: " + res.getString(0) + "\n");
-            buffer.append("Name: " + res.getString(1) + "\n");
+            buffer.append("ID: "+res.getString(0));
+            buffer.append(("\n"));
+            buffer.append("Name: "+res.getString(1));
+            buffer.append(("\n"));
+            buffer.append("Address: "+res.getString(2));
+            buffer.append(("\n"));
+            buffer.append("Phone Number: "+res.getString(3));
+            buffer.append(("\n"));
 
         }
+        Log.d("MyContactApp","MainActivity: viewData: assembled StringBuffer ");
         showMessage("Data", buffer.toString());
 
     }
@@ -70,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this );
         builder.setCancelable(true);
         builder.setTitle(title);
+        builder.setMessage(message);
         builder.show();
 
 
