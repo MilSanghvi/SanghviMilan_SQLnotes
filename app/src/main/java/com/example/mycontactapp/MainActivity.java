@@ -86,4 +86,35 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
+    public static final String EXTRA_NAME = "com.example.mycontactapp";
+
+    public void searchRecord(View view) {
+        Log.d("MyContactApp", "MainActivity: launching search");
+        Cursor curs = myDb.getAllData();
+        StringBuffer buffer = new StringBuffer();
+        if (editName.getText().toString().isEmpty() && editNumber.getText().toString().isEmpty()
+                && editAddress.getText().toString().isEmpty()) {
+            showMessage("Error", "Please type in the search");
+            return;
+        }
+
+        while (curs.moveToNext()){
+            if ((editName.getText().toString().isEmpty() || editName.getText().toString().equals(curs.getString(1)))
+                    && (editAddress.getText().toString().isEmpty() || editAddress.getText().toString().equals(curs.getString(2)))
+                    && (editNumber.getText().toString().isEmpty() || editNumber.getText().toString().equals(curs.getString(3))))
+            {
+                buffer.append("ID: " + curs.getString(0) + "\n" +
+                        "Name: " + curs.getString(1) + "\n" +
+                        "Home address: " + curs.getString(2) + "\n" +
+                        "Phone number: " + curs.getString(3) + "\n\n");
+            }
+        }
+
+        if (buffer.toString().isEmpty()) {
+            showMessage("Error", "No matches found");
+            return;
+        }
+        showMessage("Search results", buffer.toString());
+    }
 }
